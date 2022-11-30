@@ -1,0 +1,25 @@
+sourceSets {
+    integrationTest {
+        groovy.srcDir file('src/integrationTest/groovy')
+        resources.srcDir file('src/integrationTest/resources')
+        compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+task integrationTest(type: Test) {
+    description = 'Runs the integration tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    mustRunAfter test
+}
+
+check.dependsOn integrationTest
+
+task jacocoIntegrationTestReport(type: JacocoReport) {
+    group = 'verification'
+    description = 'Verifies code coverage metrics based on specified rules for the integrationTest task.'
+    executionData integrationTest
+    sourceSets sourceSets.integrationTest
+}
